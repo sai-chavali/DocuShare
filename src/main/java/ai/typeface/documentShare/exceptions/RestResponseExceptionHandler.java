@@ -38,5 +38,11 @@ public class RestResponseExceptionHandler extends ResponseEntityExceptionHandler
                 , request);
     }
 
+    @ExceptionHandler(value = {BadInputException.class})
+    protected ResponseEntity<Object> handleBadInputException(RuntimeException ex, WebRequest request) {
+        String bodyOfResponse = "Input data is malformed!";
+        return handleExceptionInternal(ex, bodyOfResponse, new HttpHeaders(), HttpStatus.BAD_REQUEST
+                , request);
+    }
 
 }

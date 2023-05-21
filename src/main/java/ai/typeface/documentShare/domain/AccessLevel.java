@@ -2,8 +2,8 @@ package ai.typeface.documentShare.domain;
 
 public enum AccessLevel {
     READ("READ"),
-//    WRITE("WRITE"),
-//    COMMENT("COMMENT"),
+    WRITE("WRITE"),
+    COMMENT("COMMENT"),
     OWNER("OWNER");
 
     private String name;

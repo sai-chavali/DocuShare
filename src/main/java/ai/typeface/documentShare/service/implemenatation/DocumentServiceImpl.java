@@ -3,10 +3,7 @@ package ai.typeface.documentShare.service.implemenatation;
 import ai.typeface.documentShare.domain.Document;
 import ai.typeface.documentShare.domain.DocumentAccess;
 import ai.typeface.documentShare.domain.DocumentLink;
-import ai.typeface.documentShare.exceptions.DocumentAccessException;
-import ai.typeface.documentShare.exceptions.DocumentLinkExpiredException;
-import ai.typeface.documentShare.exceptions.DocumentNotFoundException;
-import ai.typeface.documentShare.exceptions.FileUploadFailureException;
+import ai.typeface.documentShare.exceptions.*;
 import ai.typeface.documentShare.models.UserAccess;
 import ai.typeface.documentShare.repository.entities.DocumentAccessRepository;
 import ai.typeface.documentShare.repository.entities.DocumentLinkRepository;
@@ -17,10 +14,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.print.Doc;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.time.LocalDate;
 import java.util.*;
 
 @Service
@@ -44,15 +39,14 @@ public class DocumentServiceImpl implements DocumentService {
     }
 
     @Override
-    public boolean saveDocument(MultipartFile file, String email) {
+    public Document saveDocument(MultipartFile file, String email) {
         try {
             azureBlobService.upload(file);
         } catch (Exception ex) {
             throw new FileUploadFailureException();
         }
         Document document = Document.builder().uploadedBy(email).storageLocation("Azure Blob").fileName(file.getOriginalFilename()).uploadedOn(Timestamp.from(Instant.now())).build();
-        documentRepository.save(document);
-        return true;
+        return documentRepository.save(document);
     }
 
     public String getDocument(String id, String email) {
@@ -85,8 +79,7 @@ public class DocumentServiceImpl implements DocumentService {
                 throw new DocumentNotFoundException(documentId);
             }
         } else{
-            System.out.println("Expiration Time cannot before current time");
-            throw new DocumentNotFoundException(documentId); // Create another exception
+            throw new BadInputException("Expiration Time cannot before current time"); // Create another exception
         }
     }
 }

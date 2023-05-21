@@ -23,18 +23,15 @@ public class DocumentController {
     private DocumentService documentService;
 
     @PostMapping(path = "/upload")
-    public String uploadDocument(@RequestParam("doc") MultipartFile file, Authentication authentication) {
+    public Document uploadDocument(@RequestParam("doc") MultipartFile file, Authentication authentication) {
         Map<String,String> userDetails = AuthUtils.filterClaims((UserPrincipal) authentication.getPrincipal());
         String email = userDetails.get(AuthClaims.EMAIL.getLabel());
-        if(documentService.saveDocument(file, email))
-            return "Upload Successful";
-        else
-            return "Something went wrong";
+        return documentService.saveDocument(file, email);
     }
 
     @PostMapping(path = "/share")
     public String saveAccessAndShareLink(@RequestBody @NotNull SaveAccessDTO saveAccessDTO){
-        return documentService.saveDocumentAccess(saveAccessDTO.getDocumentId(), saveAccessDTO.getUserAccessList(), saveAccessDTO.getExpirationTime(), saveAccessDTO.isPublic());
+        return documentService.saveDocumentAccess(saveAccessDTO.getDocumentId(), saveAccessDTO.getUserAccessList(), saveAccessDTO.getExpirationTime(), saveAccessDTO.isPublicViewable());
     }
 
     @GetMapping(path = "/documentDetails")

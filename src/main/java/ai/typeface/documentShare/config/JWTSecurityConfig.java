@@ -37,7 +37,7 @@ public class JWTSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable().cors().and().authorizeRequests().antMatchers(protectedRoutes).hasAnyRole("USER")
+        http.csrf().disable().authorizeRequests().antMatchers(protectedRoutes).hasAnyRole("USER")
                 .and()
                 .authorizeRequests().antMatchers(whiteListedRoutes).permitAll()
                 .and()
@@ -61,19 +61,5 @@ public class JWTSecurityConfig {
                 chain.doFilter(request, response);
             }
         }
-    }
-
-    @Bean
-    public CorsConfigurationSource corsConfigurationSource() {
-        CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000");
-        configuration.addAllowedMethod("*");
-        configuration.addAllowedHeader("*");
-        configuration.setAllowCredentials(true);
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-        source.registerCorsConfiguration("/**", configuration);
-
-        return source;
     }
 }
